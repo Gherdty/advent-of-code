@@ -59,9 +59,7 @@ export const getSumOfShortest = () => {
               index: k
             }
           ]
-        }
-        
-        if (galaxies) {
+        } else {
           galaxies = [
             ...galaxies,
             {
