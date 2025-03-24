@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "ts-node ./src/2024/2/1.ts",
+  "exec": "ts-node ./src/2024/2/2.ts",
   "ignore": ["node_modules"]
 }

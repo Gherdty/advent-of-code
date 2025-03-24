@@ -1,49 +1,94 @@
 import { getInputString } from "../../utils";
 
-const answer = async () => {
-  const input = await getInputString("/2024/2/input.txt")
+async function main() {
+    const lines: string[] = (await getInputString("/2024/2/input.txt")).split("\n");
 
-  const arrayOfRows = input.split("\n")
+    let numSafe = 0;
 
-  const arrayOfReports = arrayOfRows.map((row) => {
-    return row.split(" ").map((num) => {
-      return Number(num)
-    })
-  })
+    for (const line of lines) {
+        const numStr = line.split(" ");
+        const numArr = numStr.map(str => parseInt(str, 10));
 
-  let safeReports = 0
+        let inc = 0;
+        let dec = 0;
 
-  for (let i = 0; i < arrayOfReports.length; i += 1) {
-    let report = arrayOfReports[i]
-    const reportLength = report.length
-    let isSafe = true
-    let isIncreasing = 0
-    let isDecreasing = 0
-    for (let j = 0; j < reportLength; j += 1) {
-      const currentNum = report[j]
-      const nextNum = report[j + 1]
-      const difference = nextNum - currentNum
-      if (difference >= 1) {
-        isIncreasing += 1
-      } else if (difference < 0) {
-        isDecreasing += 1
-      }
-      const positiveDifference = Math.abs(nextNum - currentNum)
-      if (positiveDifference < 1 || positiveDifference > 3) {
-        isSafe = false
-        continue
-      }
+        for (let j = 0; j < numArr.length - 1; j++) {
+            if (numArr[j] < numArr[j + 1]) {
+                inc++;
+            }
+            if (numArr[j] > numArr[j + 1]) {
+                dec++;
+            }
+        }
+
+        let dir = inc > dec ? 1 : -1;
+        let safe = true;
+        let unsafeFix = false;
+
+        for (let j = 0; j < numArr.length - 1; j++) {
+            if (dir > 0) {
+                if (numArr[j] >= numArr[j + 1]) {
+                    if (!unsafeFix) {
+                        if (numArr.length - 2 === j) {
+                            break;
+                        }
+                        if (
+                            numArr[j] < numArr[j + 2] &&
+                            Math.abs(numArr[j] - numArr[j + 2]) < 4
+                        ) {
+                            unsafeFix = true;
+                            j++;
+                            continue;
+                        }
+                        if (
+                            j > 0 &&
+                            numArr[j - 1] < numArr[j + 1] &&
+                            Math.abs(numArr[j - 1] - numArr[j + 1]) < 4
+                        ) {
+                            unsafeFix = true;
+                            continue;
+                        }
+                    }
+                    safe = false;
+                    break;
+                }
+            } else {
+                if (numArr[j] <= numArr[j + 1]) {
+                    if (numArr.length - 2 === j) {
+                        break;
+                    }
+                    if (!unsafeFix) {
+                        if (
+                            numArr[j] > numArr[j + 2] &&
+                            Math.abs(numArr[j] - numArr[j + 2]) < 4
+                        ) {
+                            unsafeFix = true;
+                            j++;
+                            continue;
+                        }
+                        if (
+                            j > 0 &&
+                            numArr[j - 1] > numArr[j + 1] &&
+                            Math.abs(numArr[j - 1] - numArr[j + 1]) < 4
+                        ) {
+                            unsafeFix = true;
+                            continue;
+                        }
+                    }
+                    safe = false;
+                    break;
+                }
+            }
+            if (Math.abs(numArr[j] - numArr[j + 1]) > 3) {
+                safe = false;
+                break;
+            }
+        }
+
+        numSafe += safe ? 1 : 0;
     }
-    if (isIncreasing !== reportLength - 1 && isDecreasing !== reportLength - 1) {
-      isSafe = false
-    }
 
-    if (isSafe) {
-      safeReports += 1
-    }
-  }
-
-  console.log(safeReports)
+    console.log(numSafe);
 }
 
-answer();
+main();
